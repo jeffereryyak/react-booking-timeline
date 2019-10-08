@@ -18,7 +18,7 @@ const items = [
     {
         id: 1,
         group: 1,
-        title: 'item 1 mais qui est long.... treès long....',
+        title: 'First item very very very long...',
         start: moment().add(1, 'day').valueOf(),
         end: moment().add(4, 'day').valueOf(),
     },
@@ -27,7 +27,7 @@ const items = [
         group: 2,
         title: 'item 2',
         start: moment().add(-0.5, 'day').valueOf(),
-        end: moment().add(0.5, 'day').valueOf(),
+        end: moment().add(10, 'day').valueOf(),
     },
 ]
 
