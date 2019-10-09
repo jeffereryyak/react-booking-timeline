@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import ReactTooltip from "react-tooltip";
 import { getDeviceType } from "./utils";
-import "./BookingTimeline.css";
+import "./BookingTimeline.scss";
 
 // moment.locale("fr");
 
@@ -462,6 +462,7 @@ export default class BookingTimeline extends Component {
 
               infos.push(
                 <div
+                  key={`infos${infos.length}`}
                   {...addHandles}
                   data-iscapture="true"
                   data-tip={slot.id}

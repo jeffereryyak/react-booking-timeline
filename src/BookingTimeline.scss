@@ -1,0 +1,244 @@
+.table-scroll {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+  margin: auto;
+  overflow: auto;
+  height: 100%;
+  -webkit-overflow-scrolling: touch;
+
+  table {
+    width: 100%;
+    min-width: 100%;
+    margin: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+    /* position: relative; 
+    border-collapse: collapse; */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  tbody {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  th,
+  td {
+    /* padding: 0.25rem; */
+  }
+
+  tbody td:not(:first-child) {
+    width: 25px;
+    max-width: 25px;
+    min-width: 25px;
+    white-space: nowrap;
+    /* overflow: hidden; */
+    text-overflow: ellipsis;
+  }
+
+  thead th:not(:first-child) {
+    text-align: center;
+    border-left: 1px solid lightgrey;
+  }
+
+  tr.red th {
+    background: red;
+    color: white;
+  }
+
+  tr.green th {
+    background: green;
+    color: white;
+  }
+
+  tr.purple th {
+    background: purple;
+    color: white;
+  }
+
+  td {
+    border-left: 1px solid lightgrey;
+    border-bottom: 1px solid lightgrey;
+  }
+
+  .noBorderLeft {
+    border-left: none !important;
+  }
+  .noPadding {
+    padding: 0;
+  }
+  th.header {
+    /*
+    background: #519aba;
+    color: white;
+    */
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+  }
+
+  tr:nth-child(even) {
+    background: #f9f9f9;
+  }
+  tr:nth-child(odd) {
+    background: #fff;
+  }
+
+  th.subheader {
+    background: #f1eded;
+    position: sticky;
+    position: -webkit-sticky;
+    top: 20px;
+    z-index: 10;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+  }
+
+  .stickyH {
+    position: sticky !important;
+    position: -webkit-sticky !important;
+    left: 50%;
+    float: left;
+    padding-left: 1rem;
+  }
+
+  /*
+  thead.jeff2 {
+    background: white;
+    position: sticky;
+    left: 0;
+    z-index:20;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+  }
+  */
+  .c {
+    /* position: relative !important;**/
+    left: 0px !important;
+  }
+
+  .d {
+    position: relative !important;
+    left: 20px;
+  }
+
+  .item-weekend {
+    background: #f1f1f1;
+  }
+
+  .table-wrap {
+    position: relative;
+  }
+  .fixHeadCol {
+    position: sticky;
+    position: -webkit-sticky;
+    left: 0px;
+    z-index: 11 !important;
+    max-width: 150px;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+  }
+  .fixCol {
+    background: #f7f7f7;
+    position: sticky;
+    position: -webkit-sticky;
+    left: 0px;
+    z-index: 5;
+    min-width: max-content;
+    max-width: 200px;
+    width: max-content;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+  }
+  .content {
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .centerText {
+    text-align: center;
+  }
+  .s {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-left: none;
+    border-right: none;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-left: 2px;
+    display: block;
+    height: 16px;
+  }
+  .sSelected {
+    border: 1px solid black;
+    border-right: none;
+  }
+  .b {
+    border-left: none;
+    border-right: none;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    display: block;
+    height: 16px;
+    margin-left: -2px;
+  }
+  .bSelected {
+    border: 1px solid black;
+    border-right: none;
+    border-left: none;
+  }
+  .e {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-left: none;
+    border-right: none;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-right: 2px;
+    display: block;
+    height: 16px;
+    margin-left: -2px;
+  }
+  .eSelected {
+    border: 1px solid black;
+    border-left: none;
+  }
+
+  .bgSelected {
+    background: orange !important;
+  }
+
+  .pointer {
+    cursor: pointer;
+  }
+  .red {
+    background: red;
+    /* border: none !important; */
+  }
+
+  .noVBorder {
+    border-left: none;
+    border-right: none;
+    padding: 0;
+  }
+
+  .endMiddle {
+    width: 50%;
+    float: left;
+  }
+
+  .startMiddle {
+    width: 50%;
+    float: right;
+  }
+
+  .multiEvents {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+}

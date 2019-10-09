@@ -10,6 +10,11 @@
     "timeline"
   ],
   "main": "build/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --watch",
+    "build": "webpack -p"
+  },
   "peerDependencies": {
     "react": "^15.6.2"
   },
@@ -29,12 +34,9 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "css-loader": "^3.2.0",
-    "style-loader": "^1.0.0"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack --watch",
-    "build": "webpack"
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.6",
+    "style-loader": "~0.19.0"
   },
   "repository": {
     "type": "git",
