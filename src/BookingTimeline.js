@@ -1,3 +1,4 @@
+"use strict";
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
@@ -22,7 +23,7 @@ export default class DateTimeline extends Component {
         ? props.config.canSelectedFreeEvent
         : true;
     startdate = moment(startdate);
-    enddate = moment(enddate || startdate).add(6, "months");
+    enddate = moment(enddate || startdate).add(1, "months");
     let nbDays = enddate.diff(startdate, "days");
     let data = {};
     let listItems = Array.from(items);
@@ -49,8 +50,8 @@ export default class DateTimeline extends Component {
           }
           let diffDays =
             moment(start).format("DDD") - moment(startdate).format("DDD"); //moment(start).diff(startdate, "days"); // moment(start).format("DDD") - moment(startdate).format("DDD");
-          let startMiddle = moment(start).hours() >= 12;
-          let endMiddle = moment(end).hours() <= 14;
+          let startMiddle = moment(start).hours() > 13;
+          let endMiddle = moment(end).hours() <= 13;
           let index = diffDays;
           data[group].days[index] = { id, bgColor, start, end, startMiddle };
           if (
@@ -133,11 +134,39 @@ export default class DateTimeline extends Component {
       }
       */
         let infos;
+        let itemId = dataGroup.days[j] && dataGroup.days[j].id;
+        let itemChanged = false;
+        let isMiddleStart = false;
+        let isMiddleEnd = false;
+        let previousItem;
         while (j < nbDays) {
-          if (dataGroup.days[j]) {
+          if (itemId !== undefined) {
             infos = undefined;
-            while (dataGroup.days[j] && j < nbDays) {
+            previousItem = dataGroup.days[j];
+            isMiddleStart =
+              (previousItem && moment(previousItem.start).hours() > 13) ||
+              false;
+            isMiddleEnd =
+              (previousItem && moment(previousItem.end).hours() <= 13) || false;
+
+            while (!itemChanged && j < nbDays) {
+              itemChanged =
+                itemId !== (dataGroup.days[j] && dataGroup.days[j].id);
+              itemId = dataGroup.days[j] && dataGroup.days[j].id;
+              if (itemChanged && itemId !== undefined) {
+                previousItem = dataGroup.days[j];
+                isMiddleStart =
+                  (previousItem && moment(previousItem.start).hours() > 13) ||
+                  false;
+                isMiddleEnd =
+                  (previousItem && moment(previousItem.end).hours() <= 13) ||
+                  false;
+
+                itemChanged = false;
+              }
+              console.log("is 1 :", j, itemId, itemChanged, previousItem.id);
               j++;
+              // sFullFree = !dataGroup.days[j];
             }
           } else {
             infos = {
@@ -152,46 +181,81 @@ export default class DateTimeline extends Component {
                 .valueOf(),
               bgColor: "grey"
             };
-            let startMiddle = false;
+            isMiddleStart =
+              (previousItem && moment(previousItem.end).hours() <= 13) || false;
+            if (j > 2) {
+              j = j - 1;
+            }
             let start = j;
-            if (j > 0 && moment(dataGroup.days[j - 1].end).hours() <= 14) {
+            if (j > 0 && isMiddleStart) {
               start -= 1;
-              startMiddle = true;
-              infos.start = moment(dataGroup.days[j - 1].end).valueOf();
+              // startMiddle = true;
+              infos.start = moment(previousItem.end).valueOf();
             } else {
-              infos.start = moment(infos.start)
+              infos.start = moment(startdate)
+                .add(j, "days")
                 .set("hour", 8)
                 .set("minute", 0)
                 .valueOf();
               // console.log("Found", moment(infos.start).format("LLL"));
             }
-            while (!dataGroup.days[j] && j < nbDays) {
+            itemChanged = false;
+
+            while (!itemChanged && j < nbDays) {
+              itemChanged =
+                itemId !== (dataGroup.days[j] && dataGroup.days[j].id);
+              itemId = dataGroup.days[j] && dataGroup.days[j].id;
+              console.log(
+                "is 2 :",
+                j,
+                itemId,
+                itemChanged,
+                previousItem && previousItem.id
+              );
               j++;
+              // isFullFree = !dataGroup.days[j];
             }
-            let endMiddle = false;
+            j--;
+            isMiddleStart =
+              (previousItem && moment(previousItem.start).hours() > 13) ||
+              false;
+            console.log("isMiddleStart", isMiddleStart);
+            isMiddleEnd =
+              (previousItem && moment(previousItem.end).hours() <= 13) || false;
+
+            // isPartlyFree = dataGroup.days[j] && ((moment(dataGroup.days[j].start).hours() >  13) || (moment(dataGroup.days[j].end).hours() <=  13))
+
             infos.end = moment(startdate)
               .add(j, "days")
               .valueOf();
-            if (j < nbDays && moment(dataGroup.days[j].start).hours() >= 12) {
+            if (j < nbDays && isMiddleStart) {
               /*
               console.log(
                 "endMiddle",
                 moment(dataGroup.days[j].start).format("LLL")
               );
               */
-              endMiddle = true;
-              infos.end = moment(dataGroup.days[j].start).valueOf();
+              infos.end = moment(previousItem.start).valueOf();
               // console.log("  => ", j, nbDays, moment(infos.end).format("LLL"));
             } else {
-              j = j - 1;
+              // j = j - 1;
+
               infos.end = moment(infos.end)
-                .add(-1, "day")
                 .set("hour", 20)
                 .set("minute", 0)
                 .valueOf();
+
               // console.log("=> ", j, nbDays,dataGroup.days[j] && moment(dataGroup.days[j].start).hours(), dataGroup.days[j] && moment(dataGroup.days[j].start).format("LLL"));
             }
-            // console.log("=> infos.end",start, j, moment(infos.end).format("LLL"));
+            console.log(
+              "=> infos.end",
+              start,
+              j,
+              isMiddleStart,
+              isMiddleEnd,
+              moment(infos.start).format("LLL"),
+              moment(infos.end).format("LLL")
+            );
 
             // let endMiddle = moment(infos.end).hours() <= 14;
             // console.log(" => ", moment(infos.end).format("LLL"));
@@ -205,9 +269,9 @@ export default class DateTimeline extends Component {
                     ...infos,
                     style:
                       k === start
-                        ? "s" + (startMiddle ? " startMiddle" : "")
+                        ? "s" + (isMiddleStart ? " startMiddle" : "")
                         : k === j
-                        ? "e" + (endMiddle ? " endMiddle" : "")
+                        ? "e" + (isMiddleEnd ? " endMiddle" : "")
                         : "b"
                   });
                 } else {
@@ -216,9 +280,9 @@ export default class DateTimeline extends Component {
                     ...infos,
                     style:
                       k === start
-                        ? "s" + (startMiddle ? " startMiddle" : "")
+                        ? "s" + (isMiddleStart ? " startMiddle" : "")
                         : k === j
-                        ? "e" + (endMiddle ? " endMiddle" : "")
+                        ? "e" + (isMiddleEnd ? " endMiddle" : "")
                         : "b"
                   });
                 }
@@ -227,16 +291,30 @@ export default class DateTimeline extends Component {
                   ...infos,
                   style:
                     k === start
-                      ? "s" + (startMiddle ? " startMiddle" : "")
+                      ? "s" + (isMiddleStart ? " startMiddle" : "")
                       : k === j
-                      ? "e" + (endMiddle ? " endMiddle" : "")
+                      ? "e" + (isMiddleEnd ? " endMiddle" : "")
                       : "b"
                 };
               }
             }
             listItems.push(infos);
+            j++;
+
+            /*
+            j++;
+            itemChanged = itemId !== (dataGroup.days[j] && dataGroup.days[j].id);
+            itemId = dataGroup.days[j] && dataGroup.days[j].id;
+            */
           }
-          // j++;
+          itemChanged = false;
+          //j++;
+          // itemChanged = itemId !== (dataGroup.days[j] && dataGroup.days[j].id);
+          //itemId = dataGroup.days[j] && dataGroup.days[j].id;
+          /*
+          isFullFree = !dataGroup.days[j];
+          isPartlyFree = dataGroup.days[j] && ((moment(dataGroup.days[j].start).hours() >  13) || (moment(dataGroup.days[j].end).hours() <=  13))
+          */
         }
       }
     }
@@ -448,16 +526,23 @@ export default class DateTimeline extends Component {
         let slots = data[keys[j]].days[i];
 
         let infos = [];
+        let classMultiEvent = "multiEvents";
         let clazzTd = "noPadding ";
         if (d.day() === 6 || d.day() === 0) {
           clazzTd += " item-weekend";
         }
         if (slots) {
           if (!Array.isArray(slots)) {
+            if (slots.startMiddle) {
+              classMultiEvent = "multiEvents-Invert";
+            }
+
             slots = [slots];
+
+            // clazzTd += " multiEvents";
+
             // clazzTd += ' multiEvents';
           } else {
-            // clazzTd += " multiEvents";
           }
           slots.forEach(slot => {
             if (slot) {
@@ -530,7 +615,7 @@ export default class DateTimeline extends Component {
             onClick={this.handleClick}
           >
             {" "}
-            <div className="multiEvents">{infos}</div>
+            <div className={classMultiEvent}>{infos}</div>
           </td>
         );
       }
