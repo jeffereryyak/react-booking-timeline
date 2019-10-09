@@ -62,6 +62,11 @@
     color: white;
   }
 
+  th {
+    min-height: 33px;
+    height: 21px;
+  }
+
   td {
     border-left: 1px solid lightgrey;
     border-bottom: 1px solid lightgrey;
@@ -148,7 +153,7 @@
     position: sticky;
     position: -webkit-sticky;
     left: 0px;
-    z-index: 5;
+    z-index: 13;
     min-width: max-content;
     max-width: 200px;
     width: max-content;
@@ -173,6 +178,7 @@
     margin-left: 2px;
     display: block;
     height: 16px;
+    width: 100%;
   }
   .sSelected {
     border: 1px solid black;
@@ -186,11 +192,13 @@
     display: block;
     height: 16px;
     margin-left: -2px;
+    width: 100%;
   }
   .bSelected {
     border: 1px solid black;
     border-right: none;
     border-left: none;
+    width: 100%;
   }
   .e {
     border-top-right-radius: 5px;
@@ -203,6 +211,7 @@
     display: block;
     height: 16px;
     margin-left: -2px;
+    width: 100%;
   }
   .eSelected {
     border: 1px solid black;
@@ -239,6 +248,8 @@
 
   .multiEvents {
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
+    align-items: center;
+    margin-left: -2px;
   }
 }

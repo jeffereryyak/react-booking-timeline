@@ -5,9 +5,9 @@ import ReactTooltip from "react-tooltip";
 import { getDeviceType } from "./utils";
 import "./BookingTimeline.scss";
 
-// moment.locale("fr");
+moment.locale("fr");
 
-export default class BookingTimeline extends Component {
+export default class DateTimeline extends Component {
   static propTypes = {
     config: PropTypes.object,
     onSelect: PropTypes.func
@@ -47,18 +47,28 @@ export default class BookingTimeline extends Component {
               events: {}
             };
           }
-          let diffDays = moment(start).diff(startdate, "days"); // moment(start).format("DDD") - moment(startdate).format("DDD");
+          let diffDays =
+            moment(start).format("DDD") - moment(startdate).format("DDD"); //moment(start).diff(startdate, "days"); // moment(start).format("DDD") - moment(startdate).format("DDD");
           let startMiddle = moment(start).hours() >= 12;
           let endMiddle = moment(end).hours() <= 14;
-          data[group].days[diffDays] = { id, bgColor, start, end, startMiddle };
+          let index = diffDays;
+          data[group].days[index] = { id, bgColor, start, end, startMiddle };
           if (
-            !data[group].days[diffDays - 1] ||
-            data[group].days[diffDays - 1].id !== id
+            !data[group].days[index - 1] ||
+            data[group].days[index - 1].id !== id
           ) {
-            data[group].days[diffDays].title = title;
+            data[group].days[index].title = title;
           }
           let duration =
             moment(end).format("DDD") - moment(start).format("DDD");
+
+          console.log(
+            "infos",
+            moment(start).format("LLL"),
+            moment(end).format("LLL"),
+            diffDays,
+            duration
+          );
           if (diffDays < 0) {
             // duration = 1;
             // console.log("endMiddle", endMiddle, moment(start).format('LLL'))
@@ -66,19 +76,24 @@ export default class BookingTimeline extends Component {
           if (duration === 0) {
             // data[id].days[diffDays].style = "s_e";
           } else {
-            data[group].days[diffDays].style = "s";
-            let j = 1;
-            while (j < duration) {
-              data[group].days[diffDays + j] = {
+            // console.log("index", index);
+            data[group].days[index].style = "s";
+            data[group].days[index].startMiddle = startMiddle;
+            // let j = 1;
+            index++;
+            while (index < diffDays + duration) {
+              // console.log("index", index);
+              data[group].days[index] = {
                 id,
                 style: "b",
                 bgColor,
                 start,
                 end
               };
-              j++;
+              // j++;
+              index++;
             }
-            data[group].days[diffDays + j] = {
+            data[group].days[index] = {
               id,
               style: "e",
               bgColor,
@@ -103,7 +118,7 @@ export default class BookingTimeline extends Component {
     }
     if (canSelectedFreeEvent) {
       for (let i = 0; i < groups.length; i++) {
-        let groupId = groups[i].id || "";
+        let groupId = (groups[i].id || "") + "";
         let j = 0;
         let dataGroup = data[groupId];
         if (!dataGroup) {
@@ -157,14 +172,26 @@ export default class BookingTimeline extends Component {
             infos.end = moment(startdate)
               .add(j, "days")
               .valueOf();
-            if (
-              j < nbDays &&
-              moment(dataGroup.days[j + 1].start).hours() > 12
-            ) {
+            if (j < nbDays && moment(dataGroup.days[j].start).hours() >= 12) {
+              /*
+              console.log(
+                "endMiddle",
+                moment(dataGroup.days[j].start).format("LLL")
+              );
+              */
               endMiddle = true;
-              infos.end = moment(dataGroup.days[j + 1].start).valueOf();
+              infos.end = moment(dataGroup.days[j].start).valueOf();
+              // console.log("  => ", j, nbDays, moment(infos.end).format("LLL"));
+            } else {
+              j = j - 1;
+              infos.end = moment(infos.end)
+                .add(-1, "day")
+                .set("hour", 20)
+                .set("minute", 0)
+                .valueOf();
+              // console.log("=> ", j, nbDays,dataGroup.days[j] && moment(dataGroup.days[j].start).hours(), dataGroup.days[j] && moment(dataGroup.days[j].start).format("LLL"));
             }
-            // console.log("=> ", moment(dataGroup.days[j].start).format("LLL"));
+            // console.log("=> infos.end",start, j, moment(infos.end).format("LLL"));
 
             // let endMiddle = moment(infos.end).hours() <= 14;
             // console.log(" => ", moment(infos.end).format("LLL"));
@@ -172,7 +199,7 @@ export default class BookingTimeline extends Component {
               // console.log("dataGroup.days[k]", dataGroup.days[k]);
               if (dataGroup.days[k]) {
                 dataGroup.days[k] = [dataGroup.days[k]];
-                if (k === j) {
+                if (k !== j) {
                   // console.log("infos end", infos, moment(infos.start).format('LLL'), moment(infos.end).format('LLL'))
                   dataGroup.days[k].push({
                     ...infos,
@@ -252,7 +279,7 @@ export default class BookingTimeline extends Component {
       if (id.startsWith("slot")) {
         itemId = id.substring(4);
       }
-      item = this.state.items.find(it => it.id === itemId);
+      item = this.state.items.find(it => it.id + "" === itemId);
     }
     return item;
   };
@@ -410,7 +437,11 @@ export default class BookingTimeline extends Component {
     // rows = data[key].days;
     // rows.unshift(<td className="fixCol">Lorem. sdf</td>);
     for (let i = 0; i < nbDays; i++) {
-      days.push(<th className="subheader">{d.format("DD")}</th>);
+      days.push(
+        <th key={`thd-${days.length}`} className="subheader">
+          {d.format("DD")}
+        </th>
+      );
       // let theDay = moment(d).add(i, 'days')
 
       for (let j = 0; j < keys.length; j++) {
@@ -426,7 +457,7 @@ export default class BookingTimeline extends Component {
             slots = [slots];
             // clazzTd += ' multiEvents';
           } else {
-            clazzTd += " multiEvents";
+            // clazzTd += " multiEvents";
           }
           slots.forEach(slot => {
             if (slot) {
@@ -459,7 +490,7 @@ export default class BookingTimeline extends Component {
                   ? this.state.freeEventSelectedBgColor
                   : this.state.freeEventBgColor || defaultBg
                 : defaultBg;
-
+              // console.log("className", className);
               infos.push(
                 <div
                   key={`infos${infos.length}`}
@@ -482,18 +513,24 @@ export default class BookingTimeline extends Component {
         datas[keys[j]] =
           datas[keys[j]] ||
           (showGroups
-            ? [<td className="fixCol">{data[keys[j]].title}</td>]
+            ? [
+                <td key={"tdd00"} className="fixCol">
+                  {data[keys[j]].title}
+                </td>
+              ]
             : []);
 
         datas[keys[j]].push(
           <td
+            key={`tdd${datas[keys[j]].length}`}
             className={clazzTd}
             onMouseDown={this.onMouseDown}
             onMouseUp={this.onMouseUp}
             onMouseMove={this.onMouseMove}
             onClick={this.handleClick}
           >
-            {infos}
+            {" "}
+            <div className="multiEvents">{infos}</div>
           </td>
         );
       }
@@ -511,6 +548,7 @@ export default class BookingTimeline extends Component {
       if (numMonth !== d.month()) {
         months.push(
           <th
+            key={`th-${months.length}`}
             className="header c"
             style={{ background: headerBgColor, color: headerColor }}
             colSpan={daysInMonth}
