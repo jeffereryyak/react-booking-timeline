@@ -1,10 +1,13 @@
 var path = require('path');
 module.exports = {
+    context: path.join(__dirname),
     entry: './src/index.js',
     output: {
         path: path.resolve(__dirname, 'build'),
         filename: 'index.js',
-        libraryTarget: 'commonjs2'
+        libraryTarget: 'commonjs2',
+        library: 'BookingTimeline',
+        publicPath: '/build/',
     },
     module: {
         rules: [
