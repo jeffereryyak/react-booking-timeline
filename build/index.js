@@ -17386,7 +17386,10 @@ var DateTimeline = function (_Component) {
               events: {}
             };
           }
-          var diffDays = (0, _moment2.default)(start).format("DDD") - (0, _moment2.default)(startdate).format("DDD"); //moment(start).diff(startdate, "days"); // moment(start).format("DDD") - moment(startdate).format("DDD");
+
+          var diffDays = (0, _moment2.default)((0, _moment2.default)(start).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff((0, _moment2.default)(startdate.format('YYYY-MM-DD'), 'YYYY-MM-DD'), "days");
+          // moment(start).format("DDD") - moment(startdate).format("DDD"); //moment(start).diff(startdate, "days"); // moment(start).format("DDD") - moment(startdate).format("DDD");
+
           var startMiddle = (0, _moment2.default)(start).hours() > 13;
           var endMiddle = (0, _moment2.default)(end).hours() <= 13;
           var index = diffDays;
@@ -17394,7 +17397,10 @@ var DateTimeline = function (_Component) {
           if (!data[group].days[index - 1] || data[group].days[index - 1].id !== id) {
             data[group].days[index].title = title;
           }
-          var duration = (0, _moment2.default)(end).format("DDD") - (0, _moment2.default)(start).format("DDD");
+          var duration = (0, _moment2.default)((0, _moment2.default)(end).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff((0, _moment2.default)((0, _moment2.default)(start).format('YYYY-MM-DD'), 'YYYY-MM-DD'), "days");
+          // moment(end).set("hour", 8).set("minute", 0).diff(moment(start).set("hour", 8).set("minute", 0), "days")+1;
+          //moment(end).format("DDD") - moment(start).format("DDD");
+          // console.log("DiffDays, duration:", diffDays, duration, moment(start).format("LLL"), moment(startdate).format("LLL"))
           /*
           console.log(
             "infos",
@@ -17507,10 +17513,11 @@ var DateTimeline = function (_Component) {
               bgColor: "grey"
             };
             isMiddleStart = previousItem && (0, _moment2.default)(previousItem.end).hours() <= 13 || false;
-            if (j > 2) {
+            if (j > 1) {
               j = j - 1;
             }
             var _start = j;
+            // console.log("Start", start)
             if (j > 0 && isMiddleStart) {
               _start -= 1;
               // startMiddle = true;
@@ -17534,18 +17541,25 @@ var DateTimeline = function (_Component) {
                 previousItem && previousItem.id
               );
               */
+              if (itemChanged) {
+                previousItem = dataGroup.days[j];
+              }
               j++;
               // isFullFree = !dataGroup.days[j];
             }
             j--;
-            isMiddleStart = previousItem && (0, _moment2.default)(previousItem.start).hours() > 13 || false;
+            /*
+            isMiddleStart =
+              (previousItem && moment(previousItem.start).hours() > 13) ||
+              false;
+              */
             // console.log("isMiddleStart", isMiddleStart);
             isMiddleEnd = previousItem && (0, _moment2.default)(previousItem.end).hours() <= 13 || false;
 
             // isPartlyFree = dataGroup.days[j] && ((moment(dataGroup.days[j].start).hours() >  13) || (moment(dataGroup.days[j].end).hours() <=  13))
 
             infos.end = (0, _moment2.default)(startdate).add(j, "days").valueOf();
-            if (j < nbDays && isMiddleStart) {
+            if (j < nbDays - 1 && isMiddleEnd) {
               /*
               console.log(
                 "endMiddle",

@@ -49,8 +49,10 @@ export default class DateTimeline extends Component {
               events: {}
             };
           }
-          let diffDays =
-            moment(start).format("DDD") - moment(startdate).format("DDD"); //moment(start).diff(startdate, "days"); // moment(start).format("DDD") - moment(startdate).format("DDD");
+          
+          let diffDays = moment(moment(start).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment(startdate.format('YYYY-MM-DD'), 'YYYY-MM-DD'), "days");
+            // moment(start).format("DDD") - moment(startdate).format("DDD"); //moment(start).diff(startdate, "days"); // moment(start).format("DDD") - moment(startdate).format("DDD");
+            
           let startMiddle = moment(start).hours() > 13;
           let endMiddle = moment(end).hours() <= 13;
           let index = diffDays;
@@ -61,8 +63,10 @@ export default class DateTimeline extends Component {
           ) {
             data[group].days[index].title = title;
           }
-          let duration =
-            moment(end).format("DDD") - moment(start).format("DDD");
+          let duration = moment(moment(end).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment(moment(start).format('YYYY-MM-DD'), 'YYYY-MM-DD'), "days");
+          // moment(end).set("hour", 8).set("minute", 0).diff(moment(start).set("hour", 8).set("minute", 0), "days")+1;
+            //moment(end).format("DDD") - moment(start).format("DDD");
+            // console.log("DiffDays, duration:", diffDays, duration, moment(start).format("LLL"), moment(startdate).format("LLL"))
           /*
           console.log(
             "infos",
@@ -185,10 +189,11 @@ export default class DateTimeline extends Component {
             };
             isMiddleStart =
               (previousItem && moment(previousItem.end).hours() <= 13) || false;
-            if (j > 2) {
+            if (j > 1) {
               j = j - 1;
             }
             let start = j;
+            // console.log("Start", start)
             if (j > 0 && isMiddleStart) {
               start -= 1;
               // startMiddle = true;
@@ -217,13 +222,18 @@ export default class DateTimeline extends Component {
                 previousItem && previousItem.id
               );
               */
+                if (itemChanged){
+                  previousItem = dataGroup.days[j];
+                }
               j++;
               // isFullFree = !dataGroup.days[j];
             }
             j--;
+            /*
             isMiddleStart =
               (previousItem && moment(previousItem.start).hours() > 13) ||
               false;
+              */
             // console.log("isMiddleStart", isMiddleStart);
             isMiddleEnd =
               (previousItem && moment(previousItem.end).hours() <= 13) || false;
@@ -233,7 +243,7 @@ export default class DateTimeline extends Component {
             infos.end = moment(startdate)
               .add(j, "days")
               .valueOf();
-            if (j < nbDays && isMiddleStart) {
+            if (j < (nbDays - 1) && isMiddleEnd) {
               /*
               console.log(
                 "endMiddle",
