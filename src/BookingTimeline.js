@@ -8,6 +8,7 @@ import "./BookingTimeline.scss";
 
 moment.locale("fr");
 
+
 export default class DateTimeline extends Component {
   static propTypes = {
     config: PropTypes.object,
@@ -23,7 +24,7 @@ export default class DateTimeline extends Component {
         ? props.config.canSelectedFreeEvent
         : true;
     startdate = moment(startdate);
-    enddate = moment(enddate || startdate).add(1, "months");
+    enddate = moment(enddate || startdate).add(6, "months");
     let nbDays = enddate.diff(startdate, "days");
     let data = {};
     let listItems = Array.from(items);
@@ -62,7 +63,7 @@ export default class DateTimeline extends Component {
           }
           let duration =
             moment(end).format("DDD") - moment(start).format("DDD");
-
+          /*
           console.log(
             "infos",
             moment(start).format("LLL"),
@@ -70,6 +71,7 @@ export default class DateTimeline extends Component {
             diffDays,
             duration
           );
+          */
           if (diffDays < 0) {
             // duration = 1;
             // console.log("endMiddle", endMiddle, moment(start).format('LLL'))
@@ -164,7 +166,7 @@ export default class DateTimeline extends Component {
 
                 itemChanged = false;
               }
-              console.log("is 1 :", j, itemId, itemChanged, previousItem.id);
+              // console.log("is 1 :", j, itemId, itemChanged, previousItem.id);
               j++;
               // sFullFree = !dataGroup.days[j];
             }
@@ -205,6 +207,8 @@ export default class DateTimeline extends Component {
               itemChanged =
                 itemId !== (dataGroup.days[j] && dataGroup.days[j].id);
               itemId = dataGroup.days[j] && dataGroup.days[j].id;
+
+              /*
               console.log(
                 "is 2 :",
                 j,
@@ -212,6 +216,7 @@ export default class DateTimeline extends Component {
                 itemChanged,
                 previousItem && previousItem.id
               );
+              */
               j++;
               // isFullFree = !dataGroup.days[j];
             }
@@ -219,7 +224,7 @@ export default class DateTimeline extends Component {
             isMiddleStart =
               (previousItem && moment(previousItem.start).hours() > 13) ||
               false;
-            console.log("isMiddleStart", isMiddleStart);
+            // console.log("isMiddleStart", isMiddleStart);
             isMiddleEnd =
               (previousItem && moment(previousItem.end).hours() <= 13) || false;
 
@@ -247,6 +252,7 @@ export default class DateTimeline extends Component {
 
               // console.log("=> ", j, nbDays,dataGroup.days[j] && moment(dataGroup.days[j].start).hours(), dataGroup.days[j] && moment(dataGroup.days[j].start).format("LLL"));
             }
+            /*
             console.log(
               "=> infos.end",
               start,
@@ -256,6 +262,7 @@ export default class DateTimeline extends Component {
               moment(infos.start).format("LLL"),
               moment(infos.end).format("LLL")
             );
+            */
 
             // let endMiddle = moment(infos.end).hours() <= 14;
             // console.log(" => ", moment(infos.end).format("LLL"));
@@ -381,7 +388,7 @@ export default class DateTimeline extends Component {
     let item = this.findItem(id);
     if (item) {
       if (item.isFreeEvent) {
-        console.log("is FreeEvent");
+        // console.log("is FreeEvent");
         this.unselectFreeItem(id, item);
       } else {
         document.querySelectorAll(`[id=${id}]`).forEach(el => {
@@ -416,7 +423,7 @@ export default class DateTimeline extends Component {
 
   handleClick = e => {
     if (!this.isMoving) {
-      console.log("Click!", e.target.id);
+      // console.log("Click!", e.target.id);
       this.unselectItem(this.selectedItemId);
       let item = this.selectItem(e.target.id);
       this.selectedItemId = e.target.id;
