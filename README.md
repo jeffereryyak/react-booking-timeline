@@ -66,17 +66,33 @@ See below all props for the config prop
 
 Name	|Type	|Default Value  |  Description
 |:---|:---|:---|:---
-bgColor|String| "#123456"| Background color of events
-selectedBgColor|String| "#123456"| Background color of the selected event
-headerBgColor|String| "#123456"| Background color of the header
-headerColor|String| "#123456"| Text color of the header
-freeEventBgColor|String| "#123456"| Background color of free events
-freeEventColor|String| "#123456"| Text color of free events
+locale|String|"fr"|Language
+bgColor|String| "#8dc149"| Background color of events
+selectedBgColor|String| "#ffc149"| Background color of the selected event
+headerBgColor|String| "#519aba"| Background color of the header
+headerColor|String| "white"| Text color of the header
+freeEventBgColor|String| "#d2cdcd"| Background color of free events
+freeEventSelectedBgColor|String| "#d2cdcd"| Background color of the selected free event
 groupLabel|String| ""| Label of the first column
 showGroups|bool| true| Show the group's column
 canSelectedFreeEvent|bool| true| Show free events. User can select free events
 showTooltip|bool| true| Show tooltip of events
 tooltipClassName|String||Classname of tooltip
+
+Example of class for tooltip:
+```css
+.customeTheme {
+  color: black !important;
+  background-color: burlywood !important;
+  &.place-top {
+    &:after {
+    border-top-color: burlywood !important;
+    border-top-style: solid !important;
+    border-top-width: 6px !important;
+    }
+  }
+ }
+```
 
 ## Limitations
 - Test and design for React 15

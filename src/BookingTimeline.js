@@ -294,6 +294,7 @@ export default class DateTimeline extends Component {
       freeEventSelectedBgColor:
         (config && config.freeEventSelectedBgColor) || "#d2cdcd",
       defaultBgColor: (config && config.bgColor) || "#8dc149",
+      selectedBgColor: (config && config.SelectedBgColor) || "#ffc149",
       headerBgColor: (config && config.headerBgColor) || "#519aba",
       headerColor: (config && config.headerColor) || "white",
       showGroups:
@@ -412,11 +413,16 @@ export default class DateTimeline extends Component {
     if (this.down) {
       let diffX = this.lastPosX - event.pageX;
       let diffY = this.lastPosY - event.pageY;
-      this.myRef.scrollLeft += diffX;
-      this.myRef.scrollTop += diffY;
-      this.lastPosX = event.pageX;
-      this.lastPosY = event.pageY;
-      this.isMoving = true;
+      console.log("diff",diffX, diffY)
+      if (Math.abs(diffX) > 1 || Math.abs(diffY) > 1) {
+        this.myRef.scrollLeft += diffX;
+        this.myRef.scrollTop += diffY;
+        this.lastPosX = event.pageX;
+        this.lastPosY = event.pageY;
+        this.isMoving = true;
+      } else {
+        //this.isMoving = false;
+      }
     } else {
       this.isMoving = false;
     }
