@@ -6,25 +6,31 @@ import ReactTooltip from "react-tooltip";
 import { getDeviceType } from "./utils";
 import "./BookingTimeline.scss";
 
-moment.locale("fr");
+// moment.locale("fr");
 
 
 export default class DateTimeline extends Component {
   static propTypes = {
     config: PropTypes.object,
-    onSelect: PropTypes.func
+    onSelect: PropTypes.func,
+    startdate: PropTypes.string,
+    enddate: PropTypes.string,
+    contentTooltipRender: PropTypes.func,
   };
 
   constructor(props) {
     // console.time("init");
     super(props);
-    let { startdate, enddate, groups, items } = props;
+    let { startdate, enddate, groups, items, config } = props;
+    if (config.locale) {
+      moment.locale(config.locale)
+    }
     let canSelectedFreeEvent =
-      props.config && props.config.canSelectedFreeEvent !== undefined
-        ? props.config.canSelectedFreeEvent
+      config && config.canSelectedFreeEvent !== undefined
+        ? config.canSelectedFreeEvent
         : true;
     startdate = moment(startdate);
-    enddate = moment(enddate || startdate).add(6, "months");
+    enddate = enddate ? moment(enddate) : moment(startdate).add(6, "months");
     let nbDays = enddate.diff(startdate, "days");
     let data = {};
     let listItems = Array.from(items);
@@ -37,12 +43,10 @@ export default class DateTimeline extends Component {
           group !== undefined &&
           start &&
           end &&
-          // startdate.isBefore(start) &&
           enddate.isAfter(start)
         ) {
           id = id + "";
           group = group + "";
-          // let dataGroup = groups.find(g => g.id === group);
           if (!data[group]) {
             data[group] = {
               days: Array.from(Array(nbDays)),
@@ -51,7 +55,6 @@ export default class DateTimeline extends Component {
           }
           
           let diffDays = moment(moment(start).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment(startdate.format('YYYY-MM-DD'), 'YYYY-MM-DD'), "days");
-            // moment(start).format("DDD") - moment(startdate).format("DDD"); //moment(start).diff(startdate, "days"); // moment(start).format("DDD") - moment(startdate).format("DDD");
             
           let startMiddle = moment(start).hours() > 13;
           let endMiddle = moment(end).hours() <= 13;
@@ -64,9 +67,6 @@ export default class DateTimeline extends Component {
             data[group].days[index].title = title;
           }
           let duration = moment(moment(end).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(moment(moment(start).format('YYYY-MM-DD'), 'YYYY-MM-DD'), "days");
-          // moment(end).set("hour", 8).set("minute", 0).diff(moment(start).set("hour", 8).set("minute", 0), "days")+1;
-            //moment(end).format("DDD") - moment(start).format("DDD");
-            // console.log("DiffDays, duration:", diffDays, duration, moment(start).format("LLL"), moment(startdate).format("LLL"))
           /*
           console.log(
             "infos",
@@ -83,13 +83,10 @@ export default class DateTimeline extends Component {
           if (duration === 0) {
             // data[id].days[diffDays].style = "s_e";
           } else {
-            // console.log("index", index);
             data[group].days[index].style = "s";
             data[group].days[index].startMiddle = startMiddle;
-            // let j = 1;
             index++;
             while (index < diffDays + duration) {
-              // console.log("index", index);
               data[group].days[index] = {
                 id,
                 style: "b",
@@ -97,7 +94,6 @@ export default class DateTimeline extends Component {
                 start,
                 end
               };
-              // j++;
               index++;
             }
             data[group].days[index] = {
@@ -109,9 +105,7 @@ export default class DateTimeline extends Component {
               endMiddle
             };
           }
-        } else {
-          // console.log("NO : ", items[i], startdate.isBefore(start), enddate.isAfter(start))
-        }
+        } 
       }
     }
     if (groups && groups.length) {
@@ -131,14 +125,6 @@ export default class DateTimeline extends Component {
         if (!dataGroup) {
           return;
         }
-        /*
-      if (!data[groupId]) {
-        data[groupId] = {
-          days: Array.from(Array(nbDays)),
-          events: {}
-        };
-      }
-      */
         let infos;
         let itemId = dataGroup.days[j] && dataGroup.days[j].id;
         let itemChanged = false;
@@ -170,9 +156,7 @@ export default class DateTimeline extends Component {
 
                 itemChanged = false;
               }
-              // console.log("is 1 :", j, itemId, itemChanged, previousItem.id);
               j++;
-              // sFullFree = !dataGroup.days[j];
             }
           } else {
             infos = {
@@ -180,7 +164,7 @@ export default class DateTimeline extends Component {
               id: `${Math.floor(Math.random() * 1000)}-${Math.floor(
                 Math.random() * 1000
               )}`,
-              groupId,
+              group: groupId,
               style: "s",
               start: moment(startdate)
                 .add(j, "days")
@@ -193,10 +177,8 @@ export default class DateTimeline extends Component {
               j = j - 1;
             }
             let start = j;
-            // console.log("Start", start)
             if (j > 0 && isMiddleStart) {
               start -= 1;
-              // startMiddle = true;
               infos.start = moment(previousItem.end).valueOf();
             } else {
               infos.start = moment(startdate)
@@ -204,7 +186,6 @@ export default class DateTimeline extends Component {
                 .set("hour", 8)
                 .set("minute", 0)
                 .valueOf();
-              // console.log("Found", moment(infos.start).format("LLL"));
             }
             itemChanged = false;
 
@@ -212,7 +193,6 @@ export default class DateTimeline extends Component {
               itemChanged =
                 itemId !== (dataGroup.days[j] && dataGroup.days[j].id);
               itemId = dataGroup.days[j] && dataGroup.days[j].id;
-
               /*
               console.log(
                 "is 2 :",
@@ -226,40 +206,21 @@ export default class DateTimeline extends Component {
                   previousItem = dataGroup.days[j];
                 }
               j++;
-              // isFullFree = !dataGroup.days[j];
             }
             j--;
-            /*
-            isMiddleStart =
-              (previousItem && moment(previousItem.start).hours() > 13) ||
-              false;
-              */
-            // console.log("isMiddleStart", isMiddleStart);
             isMiddleEnd =
               (previousItem && moment(previousItem.end).hours() <= 13) || false;
-
-            // isPartlyFree = dataGroup.days[j] && ((moment(dataGroup.days[j].start).hours() >  13) || (moment(dataGroup.days[j].end).hours() <=  13))
 
             infos.end = moment(startdate)
               .add(j, "days")
               .valueOf();
             if (j < (nbDays - 1) && isMiddleEnd) {
-              /*
-              console.log(
-                "endMiddle",
-                moment(dataGroup.days[j].start).format("LLL")
-              );
-              */
               infos.end = moment(previousItem.start).valueOf();
-              // console.log("  => ", j, nbDays, moment(infos.end).format("LLL"));
             } else {
-              // j = j - 1;
-
               infos.end = moment(infos.end)
                 .set("hour", 20)
                 .set("minute", 0)
                 .valueOf();
-
               // console.log("=> ", j, nbDays,dataGroup.days[j] && moment(dataGroup.days[j].start).hours(), dataGroup.days[j] && moment(dataGroup.days[j].start).format("LLL"));
             }
             /*
@@ -274,8 +235,6 @@ export default class DateTimeline extends Component {
             );
             */
 
-            // let endMiddle = moment(infos.end).hours() <= 14;
-            // console.log(" => ", moment(infos.end).format("LLL"));
             for (let k = start; k <= j; k++) {
               // console.log("dataGroup.days[k]", dataGroup.days[k]);
               if (dataGroup.days[k]) {
@@ -317,26 +276,11 @@ export default class DateTimeline extends Component {
             }
             listItems.push(infos);
             j++;
-
-            /*
-            j++;
-            itemChanged = itemId !== (dataGroup.days[j] && dataGroup.days[j].id);
-            itemId = dataGroup.days[j] && dataGroup.days[j].id;
-            */
           }
           itemChanged = false;
-          //j++;
-          // itemChanged = itemId !== (dataGroup.days[j] && dataGroup.days[j].id);
-          //itemId = dataGroup.days[j] && dataGroup.days[j].id;
-          /*
-          isFullFree = !dataGroup.days[j];
-          isPartlyFree = dataGroup.days[j] && ((moment(dataGroup.days[j].start).hours() >  13) || (moment(dataGroup.days[j].end).hours() <=  13))
-          */
         }
       }
     }
-
-    // console.timeEnd("init");
     this.state = {
       list: [],
       startdate,
@@ -344,25 +288,26 @@ export default class DateTimeline extends Component {
       nbDays,
       data,
       items: listItems || [],
-      groupLabel: (props.config && props.config.groupLabel) || "",
+      groupLabel: (config && config.groupLabel) || "",
       freeEventBgColor:
-        (props.config && props.config.freeEventBgColor) || "#d2cdcd",
+        (config && config.freeEventBgColor) || "#d2cdcd",
       freeEventSelectedBgColor:
-        (props.config && props.config.freeEventSelectedBgColor) || "#d2cdcd",
-      defaultBgColor: (props.config && props.config.bgColor) || "#8dc149",
-      headerBgColor: (props.config && props.config.headerBgColor) || "#519aba",
-      headerColor: (props.config && props.config.headerColor) || "white",
+        (config && config.freeEventSelectedBgColor) || "#d2cdcd",
+      defaultBgColor: (config && config.bgColor) || "#8dc149",
+      headerBgColor: (config && config.headerBgColor) || "#519aba",
+      headerColor: (config && config.headerColor) || "white",
       showGroups:
-        props.config && props.config.showGroups !== undefined
-          ? props.config.showGroups
+        config && config.showGroups !== undefined
+          ? config.showGroups
           : true,
       showTooltip:
-        props.config && props.config.showTooltip !== undefined
-          ? props.config.showTooltip
+        config && config.showTooltip !== undefined
+          ? config.showTooltip
           : true,
       canSelectedFreeEvent,
       defaultSelectedBgColor:
-        (props.config && props.config.selectedBgColor) || "#a074c4",
+        (config && config.selectedBgColor) || "#a074c4",
+        tooltipClassName : config && config.tooltipClassName,
       isDesktop: getDeviceType() === "Desktop"
     };
   }
@@ -438,7 +383,15 @@ export default class DateTimeline extends Component {
       let item = this.selectItem(e.target.id);
       this.selectedItemId = e.target.id;
       if (item && typeof this.props.onSelect === "function") {
-        this.props.onSelect(item);
+        let it = Object.assign({}, item)
+        if (it.isFreeEvent) {
+          it = {
+            group: item.group,
+            start : item.start,
+            end : item.end,
+          }
+        }
+        this.props.onSelect(it);
       }
     }
     this.isMoving = false;
@@ -472,7 +425,18 @@ export default class DateTimeline extends Component {
   handleContent = id => {
     let item = this.findItem(id);
     let result = "";
-    if (item && item.title) {
+    if (typeof this.props.contentTooltipRender === 'function') {
+      let it = Object.assign({}, item)
+        if (it.isFreeEvent) {
+          it = {
+            group: item.group,
+            start : item.start,
+            end : item.end,
+          }
+        }
+      result = this.props.contentTooltipRender(it)
+    }
+    if (!result && item && item.title) {
       result = (
         <div>
           <div>
@@ -511,13 +475,15 @@ export default class DateTimeline extends Component {
   render() {
     let {
       startdate,
+      enddate,
       nbDays,
       data,
       showGroups,
       groupLabel,
       headerBgColor,
       headerColor,
-      showTooltip
+      showTooltip,
+      tooltipClassName
     } = this.state;
     // console.log("showGroups", showGroups);
     let months = [];
@@ -648,6 +614,7 @@ export default class DateTimeline extends Component {
       */
       d = d.add(1, "days");
       if (numMonth !== d.month()) {
+        console.log("monthName",i,  monthName)
         months.push(
           <th
             key={`th-${months.length}`}
@@ -664,6 +631,20 @@ export default class DateTimeline extends Component {
         monthName = d.format("MMMM YYYY");
       }
     }
+    console.log("==>", nbDays, moment(enddate).month(), numMonth)
+    if (moment(enddate).month() === numMonth) {
+      months.push(
+        <th
+          key={`th-${months.length}`}
+          className="header c"
+          style={{ background: headerBgColor, color: headerColor }}
+          colSpan={daysInMonth}
+        >
+          <div className="stickyH">{monthName}</div>
+        </th>
+      );
+    }
+    
     let thGroups = null;
     if (showGroups) {
       thGroups = (
@@ -682,7 +663,10 @@ export default class DateTimeline extends Component {
         <ReactTooltip
           getContent={this.handleContent}
           effect="solid"
+          className={tooltipClassName}
+          // type="info" 
           clickable
+          style={{background:'red !important'}}
         />
       );
     }

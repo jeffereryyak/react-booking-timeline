@@ -1,11 +1,16 @@
 # react-booking-timeline
 
-React booking timeline generated
+React booking timeline generated.
+
+This component has been developed to be able to display room or place reservations. It is therefore not planned to display several events at the same time for the same room/place.
+It also allows you to select free areas.
+
+*Note that react-booking-timeline is based on React 15.*
 
 ## Install
 
-```
-$ npm install react-booking-timeline
+```sh
+npm install react-booking-timeline
 ```
 
 ## Usage
@@ -44,3 +49,39 @@ render () {
 }
 
 ```
+
+## Props
+
+
+Name	|Type	|Default Value  |  Description
+|:---|:---|:---|:---
+|startdate| String | moment().valueOf() | Start date of timeline
+|enddate|string|moment().add(6,'months').valueOf()|End date of timeline
+|onSelect|Function||Function called when the user selects an event
+|contentTooltipRender|Function|(evt) => (<div>{evt.title}</div>) | Function called to render the content of the tooltip. Tooltip is shown when the user clicks an event.
+|config|Object|see below| Config of component
+
+### Details of config prop
+See below all props for the config prop
+
+Name	|Type	|Default Value  |  Description
+|:---|:---|:---|:---
+bgColor|String| "#123456"| Background color of events
+selectedBgColor|String| "#123456"| Background color of the selected event
+headerBgColor|String| "#123456"| Background color of the header
+headerColor|String| "#123456"| Text color of the header
+freeEventBgColor|String| "#123456"| Background color of free events
+freeEventColor|String| "#123456"| Text color of free events
+groupLabel|String| ""| Label of the first column
+showGroups|bool| true| Show the group's column
+canSelectedFreeEvent|bool| true| Show free events. User can select free events
+showTooltip|bool| true| Show tooltip of events
+tooltipClassName|String||Classname of tooltip
+
+## Limitations
+- Test and design for React 15
+- Show only on event by group. If you have 2 events at the same time in the same group, events will be displayed on top of each other
+   
+## License
+
+MIT
